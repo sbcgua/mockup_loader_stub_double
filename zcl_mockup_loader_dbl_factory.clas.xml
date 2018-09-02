@@ -16,6 +16,14 @@
     <UNICODE>X</UNICODE>
     <WITH_UNIT_TESTS>X</WITH_UNIT_TESTS>
    </VSEOCLASS>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CLSNAME>ZCL_MOCKUP_LOADER_DBL_FACTORY</CLSNAME>
+     <CMPNAME>GENERATE_PARAMS</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Generate double test trigger params</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
   </asx:values>
  </asx:abap>
 </abapGit>

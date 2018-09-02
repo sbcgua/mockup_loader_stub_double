@@ -7,6 +7,14 @@ class ZCL_MOCKUP_LOADER_DBL_FACTORY definition
 
 public section.
 
+  type-pools ABAP .
+  class-methods GENERATE_PARAMS
+    importing
+      !ID_IF_DESC type ref to CL_ABAP_OBJECTDESCR
+      !I_METHOD type ABAP_METHNAME
+    returning
+      value(RT_PARAMS) type ABAP_PARMBIND_TAB .
+
   methods GENERATE_STUB
     redefinition .
 protected section.
@@ -16,6 +24,37 @@ ENDCLASS.
 
 
 CLASS ZCL_MOCKUP_LOADER_DBL_FACTORY IMPLEMENTATION.
+
+
+method GENERATE_PARAMS.
+  field-symbols <method> like line of id_if_desc->methods.
+  read table id_if_desc->methods assigning <method> with key name = i_method.
+
+  data ls_param like line of rt_params.
+  data ld_data  type ref to cl_abap_datadescr.
+  field-symbols <param> like line of <method>-parameters.
+
+  loop at <method>-parameters assigning <param> where is_optional = abap_false.
+    if <param>-parm_kind ca 'IC'. " importing and changing
+      if <param>-type_kind ca '~&?#$'. " any, clike, csequence, data, simple
+        ld_data ?= cl_abap_typedescr=>describe_by_name( 'C' ).
+      else.
+        ld_data = id_if_desc->get_method_parameter_type(
+          p_method_name    = <method>-name
+          p_parameter_name = <param>-name ).
+      endif.
+
+      ls_param-name = <param>-name.
+      case <param>-parm_kind.
+        when 'I'. ls_param-kind = 'E'.
+        when 'C'. ls_param-kind = 'C'.
+      endcase.
+      create data ls_param-value type handle ld_data.
+      insert ls_param into table rt_params.
+    endif.
+  endloop.
+
+endmethod.
 
 
 method GENERATE_STUB.
